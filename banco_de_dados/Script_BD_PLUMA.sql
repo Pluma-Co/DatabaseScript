@@ -48,6 +48,15 @@ CREATE TABLE medicao (
     FOREIGN KEY (fkSensor) REFERENCES sensor(id)
 );
 
+CREATE TABLE vazamento (
+  id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  vazamentoTotal DECIMAL(10,2) DEFAULT NULL,
+  dataInicio DATETIME DEFAULT NULL,
+  dataFim DATETIME DEFAULT NULL,
+  fkSensor INT,
+  FOREIGN KEY (fkSensor) REFERENCES sensor(id)
+);
+
 SELECT * FROM medicao;
 
 INSERT INTO empresa (razaoSocial, cnpj, dtCadastro) VALUES
