@@ -5,15 +5,17 @@ CREATE TABLE empresa (
     id INT PRIMARY KEY AUTO_INCREMENT,
     razaoSocial VARCHAR(100) NOT NULL,
     cnpj CHAR(14) UNIQUE NOT NULL,
+    codEmpresa CHAR(8) NOT NULL UNIQUE, -- XXXX1234
     dtCadastro DATETIME NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE usina (
     id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(45) NOT NULL,
     dtCadastro DATETIME NOT NULL DEFAULT NOW(),
     cidade VARCHAR(60) NOT NULL,
     estado VARCHAR(45) NOT NULL,
-    endereco VARCHAR(100) NOT NULL,
+    logradouro VARCHAR(100) NOT NULL,
     fkEmpresa INT NOT NULL,
     FOREIGN KEY (fkEmpresa) REFERENCES empresa(id)
 );
@@ -59,21 +61,21 @@ CREATE TABLE vazamento (
 
 SELECT * FROM medicao;
 
-INSERT INTO empresa (razaoSocial, cnpj, dtCadastro) VALUES
-('RZK Energia', '28133664000148', '2026-09-30'),
-('Ecoparque Usina Paulínia Verde', '03279285002850', '2026-09-30'),
-('Termoverde Caieiras', '10490040000112', '2026-09-30'),
-('Biogás Energia Ambiental S.A.', '04131501000168', '2026-09-30'),
-('Cocal Energia S.A', '14788495000170', '2026-09-30');
+INSERT INTO empresa (razaoSocial, cnpj, codEmpresa, dtCadastro) VALUES
+('RZK Energia', '28133664000148', 'RZKE0001', '2026-09-30'),
+('Ecoparque Usina Paulínia Verde', '03279285002850', 'EUPV0002', '2026-09-30'),
+('Termoverde Caieiras', '10490040000112', 'TECA0003', '2026-09-30'),
+('Biogás Energia Ambiental S.A.', '04131501000168', 'BESA0004', '2026-09-30'),
+('Cocal Energia S.A', '14788495000170', 'COEN0005', '2026-09-30');
 
 SELECT * FROM empresa;
 
-INSERT INTO usina (dtCadastro, cidade, estado, endereco, fkEmpresa) VALUES 
-(NOW(), 'São Paulo', 'SP', 'Estr. de Sapopemba, 23325 - Cidade Satélite Santa Bárbara', 1),
-(NOW(), 'Paulínia', 'SP', 'Avenida Orlando Vedovello, 894 - Parque da Represa, Paulínia', 2),
-(NOW(), 'Caieiras', 'SP', 'Via de Acesso Norte, Km 33 Rodovia dos Bandeirantes – Bairro Calcárea, Caieiras', 3),
-(NOW(), 'São Paulo', 'SP', 'Rua Mogeiro, 1.580 – Vila Perus', 4),
-(NOW(), 'Narandiba', 'SP', 'Estrada Municipal Narandiba – Fazenda Mosquito', 5);
+INSERT INTO usina (dtCadastro, cidade, estado, logradouro, fkEmpresa) VALUES 
+('Thopen',  NOW(), 'São Paulo', 'SP', 'Estr. de Sapopemba, 23325 - Cidade Satélite Santa Bárbara', 1),
+('UTE Paulínia Verde', NOW(), 'Paulínia', 'SP', 'Avenida Orlando Vedovello, 894 - Parque da Represa, Paulínia', 2),
+('UVS Termoverde Caieiras', NOW(), 'Caieiras', 'SP', 'Via de Acesso Norte, Km 33 Rodovia dos Bandeirantes – Bairro Calcárea, Caieiras', 3),
+('Usina Bandeirantes', NOW(), 'São Paulo', 'SP', 'Rua Mogeiro, 1.580 – Vila Perus', 4),
+('Usina Cocal', NOW(), 'Narandiba', 'SP', 'Estrada Municipal Narandiba – Fazenda Mosquito', 5);
 
 INSERT INTO sensor (localInstalacao, ativo, dtInstalacao, numeroSerie, fkUsina) VALUES 
 ('Biodigestor', 1, '2026-09-30', 'MQ2-SP01', 1),
@@ -104,7 +106,7 @@ INNER JOIN sensor ON usina.id = sensor.fkUsina;
 SELECT 
 empresa.razaoSocial AS 'Empresa Operadora',
 usina.cidade AS 'Cidade',
-usina.endereco AS 'Localização da Usina',
+usina.logradouro AS 'Localização da Usina',
 sensor.numeroSerie AS 'Código do Sensor',
 sensor.localInstalacao AS 'Ponto de Monitoramento'
 FROM empresa
@@ -114,13 +116,13 @@ INNER JOIN sensor ON usina.id = sensor.fkUsina;
 -- Selecionar apenas o nome de cada empresa junto com o endereço de suas usinas
 SELECT 
 empresa.razaoSocial AS NOME_EMPRESA,
-usina.endereco AS ENDEREÇO_USINA
+usina.logradouro AS ENDEREÇO_USINA
 FROM empresa
 INNER JOIN usina ON empresa.id = usina.fkEmpresa;
 
 -- Selecionar a usina e a quantidade de sensores relacionados a ela
 SELECT 
-usina.endereco AS USINA,
+usina.logradouro AS USINA,
 sensor.numeroSerie AS SENSORES 
 FROM usina
 INNER JOIN sensor ON usina.id = usina.fkEmpresa;
