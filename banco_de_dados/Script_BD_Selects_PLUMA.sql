@@ -8,7 +8,7 @@ INNER JOIN sensor ON usina.id = sensor.fkUsina;
 SELECT 
 empresa.razaoSocial AS 'Empresa Operadora',
 usina.cidade AS 'Cidade',
-usina.endereco AS 'Localização da Usina',
+usina.logradouro AS 'Localização da Usina',
 sensor.numeroSerie AS 'Código do Sensor',
 sensor.localInstalacao AS 'Ponto de Monitoramento'
 FROM empresa
@@ -18,25 +18,25 @@ INNER JOIN sensor ON usina.id = sensor.fkUsina;
 -- Selecionar apenas o nome de cada empresa junto com o endereço de suas usinas
 SELECT 
 empresa.razaoSocial AS NOME_EMPRESA,
-usina.endereco AS ENDEREÇO_USINA
+usina.logradouro AS ENDEREÇO_USINA
 FROM empresa
 INNER JOIN usina ON empresa.id = usina.fkEmpresa;
 
 -- Selecionar a usina e a quantidade de sensores relacionados a ela
 SELECT 
-usina.endereco AS USINA,
+usina.logradouro AS USINA,
 sensor.numeroSerie AS SENSORES 
 FROM usina
 INNER JOIN sensor ON usina.id = usina.fkEmpresa;
 
 -- Selecionar usina e seus sensores respectivos mostrando apenas sensores ativos
-SELECT 
+SELECT
 empresa.razaoSocial AS EMPRESA,
-usina.id AS USINA,
+usina.nome AS USINA,
 sensor.numeroSerie AS SENSORES_ATIVOS
 FROM usina 
-INNER JOIN sensor ON usina.id = usina.fkEmpresa
-INNER JOIN empresa ON empresa.id = usina.fkEmpresa
+JOIN sensor ON sensor.fkUsina = usina.id
+LEFT JOIN empresa ON empresa.id = usina.fkEmpresa
 WHERE ativo = 1;
 
 -- Selecionar empresas de São Paulo e suas respectivas usinas
