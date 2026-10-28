@@ -70,7 +70,7 @@ INSERT INTO empresa (razaoSocial, cnpj, codEmpresa, dtCadastro) VALUES
 
 SELECT * FROM empresa;
 
-INSERT INTO usina (dtCadastro, cidade, estado, logradouro, fkEmpresa) VALUES 
+INSERT INTO usina (nome, dtCadastro, cidade, estado, logradouro, fkEmpresa) VALUES 
 ('Thopen',  NOW(), 'São Paulo', 'SP', 'Estr. de Sapopemba, 23325 - Cidade Satélite Santa Bárbara', 1),
 ('UTE Paulínia Verde', NOW(), 'Paulínia', 'SP', 'Avenida Orlando Vedovello, 894 - Parque da Represa, Paulínia', 2),
 ('UVS Termoverde Caieiras', NOW(), 'Caieiras', 'SP', 'Via de Acesso Norte, Km 33 Rodovia dos Bandeirantes – Bairro Calcárea, Caieiras', 3),
@@ -120,22 +120,16 @@ usina.logradouro AS ENDEREÇO_USINA
 FROM empresa
 INNER JOIN usina ON empresa.id = usina.fkEmpresa;
 
--- Selecionar a usina e a quantidade de sensores relacionados a ela
-SELECT 
-usina.logradouro AS USINA,
-sensor.numeroSerie AS SENSORES 
-FROM usina
-INNER JOIN sensor ON usina.id = usina.fkEmpresa;
-
--- Selecionar usina e seus sensores respectivos mostrando apenas sensores ativos
+-- Selecionar usina e seus sensores respectivos mostrando apenas sensores ativos 
 SELECT 
 empresa.razaoSocial AS EMPRESA,
-usina.id AS USINA,
+usina.nome AS USINA,
 sensor.numeroSerie AS SENSORES_ATIVOS
 FROM usina 
-INNER JOIN sensor ON usina.id = usina.fkEmpresa
-INNER JOIN empresa ON empresa.id = usina.fkEmpresa
+JOIN sensor ON sensor.fkUsina = usina.id
+LEFT JOIN empresa ON empresa.id = usina.fkEmpresa
 WHERE ativo = 1;
+
 
 -- Selecionar empresas de São Paulo e suas respectivas usinas
 SELECT 
