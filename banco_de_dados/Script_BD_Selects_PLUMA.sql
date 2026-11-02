@@ -1,3 +1,4 @@
+
 -- Selecionar todos os dados das tabelas união completa entre empresa, usina e sensores.
 SELECT * 
 FROM empresa
@@ -22,23 +23,6 @@ usina.logradouro AS ENDEREÇO_USINA
 FROM empresa
 INNER JOIN usina ON empresa.id = usina.fkEmpresa;
 
--- Selecionar a usina e a quantidade de sensores relacionados a ela
-SELECT 
-usina.logradouro AS USINA,
-sensor.numeroSerie AS SENSORES 
-FROM usina
-INNER JOIN sensor ON usina.id = usina.fkEmpresa;
-
--- Selecionar usina e seus sensores respectivos mostrando apenas sensores ativos
-SELECT
-empresa.razaoSocial AS EMPRESA,
-usina.nome AS USINA,
-sensor.numeroSerie AS SENSORES_ATIVOS
-FROM usina 
-JOIN sensor ON sensor.fkUsina = usina.id
-LEFT JOIN empresa ON empresa.id = usina.fkEmpresa
-WHERE ativo = 1;
-
 -- Selecionar empresas de São Paulo e suas respectivas usinas
 SELECT 
 empresa.razaoSocial AS NOME_EMPRESA,
@@ -47,3 +31,43 @@ usina.estado AS CIDADE
 FROM empresa
 INNER JOIN usina ON empresa.id = usina.fkEmpresa
 WHERE usina.estado = 'SP';
+
+USE pluma;
+-- Selects - Dashboard 
+
+-- Selecionar usina e seus sensores respectivos mostrando apenas sensores ativos 
+SELECT 
+empresa.razaoSocial AS EMPRESA,
+usina.nome AS USINA,
+sensor.numeroSerie AS SENSORES_ATIVOS
+FROM usina 
+JOIN sensor ON sensor.fkUsina = usina.id
+LEFT JOIN empresa ON empresa.id = usina.fkEmpresa
+WHERE ativo = 1;
+
+-- Historico de medições
+SELECT * FROM medicao 
+ORDER BY dtMedicao DESC;
+
+-- Total de vazamentos
+SELECT COUNT(*) 'Vazamentos Totais'
+FROM vazamento
+WHERE dataInicio >= '2026-10-01'
+AND dataInicio < '2026-11-01';
+
+-- Maior tempo de vazamento
+SELECT MAX(TIMESTAMPDIFF(HOUR, dataInicio, dataFim)) maiorTempoVazamento
+FROM vazamento
+WHERE dataInicio >= '2026-10-01'
+AND dataInicio < '2026-11-01';
+
+-- Vazamento Total por Local
+SELECT
+sensor.localInstalacao 'Vazamento por Local',
+SUM(vazamento.vazamentoTotal) Total
+FROM vazamento
+JOIN sensor ON vazamento.fkSensor = sensor.id
+WHERE vazamento.dataInicio >= '2026-10-01'
+AND vazamento.dataInicio < '2026-11-01'
+GROUP BY sensor.localInstalacao
+ORDER BY Total DESC;
